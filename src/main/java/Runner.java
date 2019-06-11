@@ -16,7 +16,7 @@ public class Runner {
 //        ad.delete(2L);
 //        ad.delete(3L);
 //        System.out.println(ad.get(3L));
-        firstUser.setName("Egor");
+        firstUser.setName("Andrey");
         ad.update(firstUser);
         System.out.println(ad.getAll());
     }

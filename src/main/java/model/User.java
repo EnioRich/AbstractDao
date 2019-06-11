@@ -1,5 +1,8 @@
 package model;
 
+import annotations.Table;
+
+@Table(value = "users")
 public class User {
     private Long id;
     private String name;

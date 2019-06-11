@@ -2,6 +2,7 @@ package dao;
 
 import connect.DataBaseConnector;
 
+import annotations.Table;
 import org.apache.log4j.Logger;
 
 import java.lang.reflect.Field;
@@ -28,7 +29,7 @@ public abstract class AbstractDao<T, ID> implements GenericDao<T, ID> {
 
     public void save(T t) {
         String query = "INSERT INTO "
-                + getTableName()
+                + getTableName(tClass)
                 + " (" + getFieldsNames()
                 + ") VALUES ("
                 + getValues(t)
@@ -45,7 +46,7 @@ public abstract class AbstractDao<T, ID> implements GenericDao<T, ID> {
             T object = tClass.newInstance();
             Field[] fields = tClass.getDeclaredFields();
             String query = "SELECT * FROM "
-                    + getTableName()
+                    + getTableName(tClass)
                     + " WHERE id ="
                     + id
                     + "";
@@ -77,7 +78,7 @@ public abstract class AbstractDao<T, ID> implements GenericDao<T, ID> {
                         .append("', ");
             }
             sb.delete(sb.length() - 2, sb.length() - 1);
-            String query = "UPDATE " + getTableName() + " SET " + sb + "WHERE id = " + getId(t);
+            String query = "UPDATE " + getTableName(tClass) + " SET " + sb + "WHERE id = " + getId(t);
             Statement statement = connection.createStatement();
             statement.executeUpdate(query);
         } catch (Exception e) {
@@ -87,7 +88,7 @@ public abstract class AbstractDao<T, ID> implements GenericDao<T, ID> {
 
     public void delete(ID t) {
         String query = "DELETE FROM "
-                + getTableName()
+                + getTableName(tClass)
                 + " WHERE id = "
                 + t
                 + "";
@@ -103,7 +104,7 @@ public abstract class AbstractDao<T, ID> implements GenericDao<T, ID> {
         try {
             Field[] fields = tClass.getDeclaredFields();
             String query = "SELECT * FROM "
-                    + getTableName()
+                    + getTableName(tClass)
                     + "";
             Statement statement = connection.createStatement();
             ResultSet resultSet = statement.executeQuery(query);
@@ -166,7 +167,8 @@ public abstract class AbstractDao<T, ID> implements GenericDao<T, ID> {
         return id;
     }
 
-    private String getTableName() {
-        return tClass.getSimpleName();
+    private String getTableName(Class tClass) {
+        Table tableName = (Table) tClass.getAnnotation(Table.class);
+        return tableName.value();
     }
 }
